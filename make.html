@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <title>Document</title>
+  <style>
+  </style>
+
+  <script>
+    $(() => {
+      $("#bookid").blur(() => {
+
+        let y = $("#bookid").val();
+
+        $("#bookid").disabled = true;
+
+        let ajaxparams = {
+          data: { x: y },
+          url: "http://localhost:8081/getItem",
+          type: 'get',
+          dataType: "json",
+          success: (output) => {
+
+            if (output.bookfoundstatus) {
+              $("#msg").text("book details found");
+              $("#bookname").val(output.bookdetails.bookname);
+              $("#bookp").val(output.bookdetails.price);
+              $("#seeall").text(output.bookdetails.bookid + " " + output.bookdetails.bookname + " " + output.bookdetails.price);
+            }
+
+            else {
+              $("#msg").text("book details not found");
+              
+            }
+          },
+          error: (error) => { console.log("failure " + error) }
+
+        };
+        $.ajax(ajaxparams);
+
+      });
+
+
+
+      //INSERT=================================================
+
+      $("#add").click(() => {
+
+        let x = $("#bookid").val();
+        let y = $("#bookname").val();
+        let z = $("#bookp").val();
+
+        $("#empno").disabled = false;
+
+        let ajaxparams = {
+          data: { a: x, b: y, c: z },
+          url: "http://localhost:8081/insert",
+          type: 'get',
+          dataType: "json",
+          success: (output) => {
+
+            if (output.bookfoundstatus) {
+              $("#msg").text("book got Inserted");
+              $("#seeall").text("book got Inserted");
+            }
+            else {
+              $("#msg").text("book details not Inserted");
+            }
+          },
+          error: (error) => { console.log("failure " + error) }
+
+        };
+        $.ajax(ajaxparams);
+
+      });
+
+
+
+      //GET ALL=================================================
+
+      $("#getall").click(() => {
+
+        $("#bookid").disabled = false;
+
+        let ajaxparams = {
+          data: {},
+          url: "http://localhost:900/getall",
+          type: 'get',
+          dataType: "json",
+          success: (output) => {
+            let items = output;
+            let itemscontents = "";
+            for (let i = 0; i < items.length; i++) {
+              itemscontents += "<br/>" + items[i].bookid + "  " + items[i].bookname + " " + items[i].price;
+            }
+            $("#seeall").html(itemscontents);
+
+          },
+          error: (error) => { console.log("failure " + error) }
+
+        };
+        $.ajax(ajaxparams);
+      });
+
+
+    });
+  </script>
+</head>
+
+<body>
+  <input type="text" id="bookid" placeholder="Book ID" />
+  <span id="msg"> Message</span><br />
+  <input type="text" id="bookname" placeholder="Book name" /><br />
+  <input type="text" id="bookp" placeholder="Dept ID" /><br>
+  <button id="add">Add</button>
+  <button id="getall">Get All</button>
+  <hr />
+  <p id="seeall"></p>
+</body>
+</html>
